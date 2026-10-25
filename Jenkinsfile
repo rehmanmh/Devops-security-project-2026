@@ -15,28 +15,28 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init'
+                bat 'terraform init'
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                sh 'terraform validate'
+                bat 'terraform validate'
             }
         }
 
         stage('Security Gate: Checkov Plan Scan') {
             steps {
-                sh 'terraform plan -out=tfplan.binary'
-                sh 'terraform show -json tfplan.binary > tfplan.json'
-                sh 'checkov -f tfplan.json --compact'
+                bat 'terraform plan -out=tfplan.binary'
+                bat 'terraform show -json tfplan.binary > tfplan.json'
+                bat 'checkov -f tfplan.json --compact'
             }
         }
 
         stage('Manual Approval & Deploy') {
             steps {
                 input message: 'Security scan passed! Do you want to deploy to GCP?', ok: 'Deploy'
-                sh 'terraform apply -auto-approve tfplan.binary'
+                bat 'terraform apply -auto-approve tfplan.binary'
             }
         }
     }
