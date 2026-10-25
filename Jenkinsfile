@@ -1,11 +1,10 @@
 pipeline {
-    agent any
+    agent { label 'terraform-vm' }
 
     environment {
-        // Uses your GCP Service Account credential stored in Jenkins
         GOOGLE_APPLICATION_CREDENTIALS = credentials('gcp-sa-json')
-        // Put your GCP project ID here so Terraform picks it up automatically
         TF_VAR_gcp_project_id = 'devops-security-lab-2026'
+        PATH = "/home/rkrehmankhan/.local/bin:${env.PATH}"
     }
 
     stages {
@@ -17,30 +16,29 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                bat 'terraform init'
+                sh 'terraform init'
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                bat 'terraform validate'
+                sh 'terraform validate'
             }
         }
 
         stage('Security Gate: Checkov Plan Scan') {
             steps {
-                bat 'terraform plan -no-color -out=tfplan.binary'
-                bat 'terraform show -json tfplan.binary > tfplan.json'
-                bat 'where checkov || echo checkov not on PATH'
-                bat 'checkov --version'
-                bat 'checkov -f tfplan.json --framework terraform_plan --compact'
+                sh 'terraform plan -no-color -out=tfplan.binary'
+                sh 'terraform show -json tfplan.binary > tfplan.json'
+                sh 'checkov --version'
+                sh 'checkov -f tfplan.json --framework terraform_plan --compact'
             }
         }
 
         stage('Manual Approval & Deploy') {
             steps {
                 input message: 'Security scan passed! Do you want to deploy to GCP?', ok: 'Deploy'
-                bat 'terraform apply -auto-approve tfplan.binary'
+                sh 'terraform apply -auto-approve tfplan.binary'
             }
         }
     }
