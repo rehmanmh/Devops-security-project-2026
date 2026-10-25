@@ -1,0 +1,14 @@
+# Local Terraform directories and files
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!terraform.tfvars.example
+
+# Binary and JSON execution plans
+tfplan.binary
+tfplan.json
+
+# OS files
+.DS_Store
