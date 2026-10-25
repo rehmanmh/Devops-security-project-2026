@@ -5,7 +5,7 @@ pipeline {
         // Uses your GCP Service Account credential stored in Jenkins
         GOOGLE_APPLICATION_CREDENTIALS = credentials('gcp-sa-json')
         // Put your GCP project ID here so Terraform picks it up automatically
-        TF_VAR_gcp_project_id = 'YOUR_NEW_PROJECT_ID'
+        TF_VAR_gcp_project_id = 'devops-security-lab-2026'
     }
 
     stages {
