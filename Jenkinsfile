@@ -31,7 +31,7 @@ pipeline {
                 sh 'terraform plan -no-color -out=tfplan.binary'
                 sh 'terraform show -json tfplan.binary > tfplan.json'
                 sh 'checkov --version'
-                sh 'checkov -f tfplan.json --framework terraform_plan --compact'
+                sh 'checkov -d . terraform --compact'
             }
         }
 
