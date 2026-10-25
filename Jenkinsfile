@@ -29,9 +29,11 @@ pipeline {
 
         stage('Security Gate: Checkov Plan Scan') {
             steps {
-                bat 'terraform plan -out=tfplan.binary'
+                bat 'terraform plan -no-color -out=tfplan.binary'
                 bat 'terraform show -json tfplan.binary > tfplan.json'
-                bat 'checkov -f tfplan.json --compact'
+                bat 'where checkov || echo checkov not on PATH'
+                bat 'checkov --version'
+                bat 'checkov -f tfplan.json --framework terraform_plan --compact'
             }
         }
 
